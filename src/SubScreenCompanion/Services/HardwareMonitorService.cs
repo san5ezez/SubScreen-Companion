@@ -289,3 +289,4 @@ namespace SubScreenCompanion.Services
         }
     }
 }
+

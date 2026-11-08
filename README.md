@@ -117,3 +117,4 @@ dotnet publish src/SubScreenCompanion/SubScreenCompanion.csproj -c Release -r wi
 ### 📄 Лицензия
 
 Распространяется под свободной лицензией [MIT](LICENSE).
+
