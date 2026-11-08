@@ -1,0 +1,51 @@
+name: Build & Release SubScreen Companion
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore src/SubScreenCompanion/SubScreenCompanion.csproj
+
+    - name: Build and Publish Single-File Executable
+      run: >
+        dotnet publish src/SubScreenCompanion/SubScreenCompanion.csproj
+        -c Release
+        -r win-x64
+        --self-contained true
+        -p:PublishSingleFile=true
+        -p:IncludeNativeLibrariesForSelfExtract=true
+        -p:EnableCompressionInSingleFile=true
+        -o publish/
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SubScreenCompanion-win-x64
+        path: publish/
+
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: publish/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
