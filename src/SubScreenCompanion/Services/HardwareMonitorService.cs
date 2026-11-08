@@ -81,6 +81,7 @@ namespace SubScreenCompanion.Services
                     IsCpuEnabled = true,
                     IsGpuEnabled = true,
                     IsMemoryEnabled = true,
+                    IsMotherboardEnabled = true,
                     IsNetworkEnabled = true,
                     IsStorageEnabled = true
                 };
@@ -93,6 +94,33 @@ namespace SubScreenCompanion.Services
                 Debug.WriteLine($"Failed to open LibreHardwareMonitor: {ex.Message}");
                 _isInitialized = false;
             }
+        }
+
+        private static string CleanCpuName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return "CPU";
+            return name
+                .Replace("12th Gen ", "")
+                .Replace("13th Gen ", "")
+                .Replace("14th Gen ", "")
+                .Replace("15th Gen ", "")
+                .Replace("Intel(R) ", "")
+                .Replace("Intel ", "")
+                .Replace("Core(TM) ", "")
+                .Replace("AMD ", "")
+                .Trim();
+        }
+
+        private static string CleanGpuName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return "GPU";
+            return name
+                .Replace("NVIDIA GeForce ", "")
+                .Replace("NVIDIA ", "")
+                .Replace("GeForce ", "")
+                .Replace("AMD Radeon ", "")
+                .Replace("Radeon ", "")
+                .Trim();
         }
 
         public void UpdateMetrics(HardwareMetrics metrics)
@@ -122,6 +150,11 @@ namespace SubScreenCompanion.Services
             {
                 try
                 {
+                    float detectedCpuTemp = 0;
+                    float detectedCpuClock = 0;
+                    float detectedCpuPower = 0;
+                    float detectedCpuLoad = 0;
+
                     foreach (var hardware in _computer.Hardware)
                     {
                         hardware.Update();
@@ -133,32 +166,77 @@ namespace SubScreenCompanion.Services
                         // CPU
                         if (hardware.HardwareType == HardwareType.Cpu)
                         {
-                            metrics.CpuName = hardware.Name;
+                            metrics.CpuName = CleanCpuName(hardware.Name);
 
                             foreach (var sensor in hardware.Sensors)
                             {
-                                if (sensor.SensorType == SensorType.Load && sensor.Name.Contains("Total", StringComparison.OrdinalIgnoreCase))
+                                if (sensor.SensorType == SensorType.Load)
                                 {
-                                    metrics.CpuLoad = (float)Math.Round(sensor.Value ?? 0, 0);
+                                    if (sensor.Name.Contains("Total", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        detectedCpuLoad = (float)Math.Round(sensor.Value ?? 0, 0);
+                                    }
+                                    else if (detectedCpuLoad == 0 && sensor.Value.HasValue)
+                                    {
+                                        detectedCpuLoad = (float)Math.Round(sensor.Value.Value, 0);
+                                    }
                                 }
-                                else if (sensor.SensorType == SensorType.Temperature &&
-                                    (sensor.Name.Contains("Package", StringComparison.OrdinalIgnoreCase) ||
-                                     sensor.Name.Contains("Core (Tctl/Tdie)", StringComparison.OrdinalIgnoreCase) ||
-                                     sensor.Name.Contains("Core Average", StringComparison.OrdinalIgnoreCase) ||
-                                     metrics.CpuTemp == 0))
+                                else if (sensor.SensorType == SensorType.Temperature)
                                 {
                                     if (sensor.Value.HasValue && sensor.Value > 0)
                                     {
-                                        metrics.CpuTemp = (float)Math.Round(sensor.Value.Value, 0);
+                                        if (sensor.Name.Contains("Package", StringComparison.OrdinalIgnoreCase) ||
+                                            sensor.Name.Contains("Core (Tctl/Tdie)", StringComparison.OrdinalIgnoreCase) ||
+                                            sensor.Name.Contains("Core Max", StringComparison.OrdinalIgnoreCase) ||
+                                            sensor.Name.Contains("Core Average", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            detectedCpuTemp = (float)Math.Round(sensor.Value.Value, 0);
+                                        }
+                                        else if (detectedCpuTemp == 0)
+                                        {
+                                            detectedCpuTemp = (float)Math.Round(sensor.Value.Value, 0);
+                                        }
                                     }
                                 }
-                                else if (sensor.SensorType == SensorType.Clock && sensor.Name.Contains("Core #1", StringComparison.OrdinalIgnoreCase))
+                                else if (sensor.SensorType == SensorType.Clock)
                                 {
-                                    metrics.CpuClock = (float)Math.Round(sensor.Value ?? 0, 0);
+                                    if (sensor.Value.HasValue && sensor.Value > 100)
+                                    {
+                                        if (sensor.Name.Contains("Core", StringComparison.OrdinalIgnoreCase) ||
+                                            sensor.Name.Contains("CPU", StringComparison.OrdinalIgnoreCase) ||
+                                            detectedCpuClock == 0)
+                                        {
+                                            detectedCpuClock = (float)Math.Round(sensor.Value.Value, 0);
+                                        }
+                                    }
                                 }
-                                else if (sensor.SensorType == SensorType.Power && sensor.Name.Contains("Package", StringComparison.OrdinalIgnoreCase))
+                                else if (sensor.SensorType == SensorType.Power)
                                 {
-                                    metrics.CpuPower = (float)Math.Round(sensor.Value ?? 0, 0);
+                                    if (sensor.Value.HasValue && sensor.Value > 0)
+                                    {
+                                        if (sensor.Name.Contains("Package", StringComparison.OrdinalIgnoreCase) ||
+                                            sensor.Name.Contains("CPU", StringComparison.OrdinalIgnoreCase) ||
+                                            detectedCpuPower == 0)
+                                        {
+                                            detectedCpuPower = (float)Math.Round(sensor.Value.Value, 0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Motherboard (резервные датчики для CPU)
+                        if (hardware.HardwareType == HardwareType.Motherboard && detectedCpuTemp == 0)
+                        {
+                            foreach (var sensor in hardware.Sensors)
+                            {
+                                if (sensor.SensorType == SensorType.Temperature &&
+                                    (sensor.Name.Contains("CPU", StringComparison.OrdinalIgnoreCase) || sensor.Name.Contains("Processor", StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    if (sensor.Value.HasValue && sensor.Value > 0)
+                                    {
+                                        detectedCpuTemp = (float)Math.Round(sensor.Value.Value, 0);
+                                    }
                                 }
                             }
                         }
@@ -168,7 +246,7 @@ namespace SubScreenCompanion.Services
                             hardware.HardwareType == HardwareType.GpuAmd ||
                             hardware.HardwareType == HardwareType.GpuIntel)
                         {
-                            metrics.GpuName = hardware.Name;
+                            metrics.GpuName = CleanGpuName(hardware.Name);
 
                             foreach (var sensor in hardware.Sensors)
                             {
@@ -216,6 +294,11 @@ namespace SubScreenCompanion.Services
                             }
                         }
                     }
+
+                    if (detectedCpuLoad > 0) metrics.CpuLoad = detectedCpuLoad;
+                    if (detectedCpuTemp > 0) metrics.CpuTemp = detectedCpuTemp;
+                    if (detectedCpuClock > 0) metrics.CpuClock = detectedCpuClock;
+                    if (detectedCpuPower > 0) metrics.CpuPower = detectedCpuPower;
                 }
                 catch (Exception ex)
                 {

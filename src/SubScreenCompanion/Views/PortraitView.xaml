@@ -9,31 +9,33 @@
 
     <Grid Background="{Binding CurrentPreset.BackgroundBrush}">
         <!-- Главная вертикальная раскладка виджетов -->
-        <Grid Margin="16,20,16,20">
+        <Grid Margin="18,16,18,16">
             <Grid.RowDefinitions>
                 <!-- 1. Часы и статус -->
                 <RowDefinition Height="Auto"/>
                 <!-- 2. CPU -->
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <!-- 3. GPU -->
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <!-- 4. RAM -->
                 <RowDefinition Height="Auto"/>
                 <!-- 5. Сеть -->
                 <RowDefinition Height="Auto"/>
+                <!-- 6. Диск / Статус -->
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!-- 1. Часы и дата -->
-            <Border Grid.Row="0" Margin="4,4,4,12" CornerRadius="16" 
+            <Border Grid.Row="0" Margin="0,0,0,12" CornerRadius="16" 
                     Background="{Binding CurrentPreset.CardBrush}" 
-                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1"
-                    Padding="18,22">
+                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1.5"
+                    Padding="16,18">
                 <StackPanel HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,6">
                         <Border Width="8" Height="8" CornerRadius="4" Background="{Binding CurrentPreset.AccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <TextBlock Text="SYSTEM TIME" FontSize="11" FontWeight="Bold" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="{Binding TimeString}" FontSize="52" FontWeight="Black" 
+                    <TextBlock Text="{Binding TimeString}" FontSize="50" FontWeight="Black" 
                                Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding DateString}" FontSize="13" FontWeight="SemiBold" 
                                Foreground="{Binding CurrentPreset.SubtextBrush}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
@@ -41,30 +43,34 @@
             </Border>
 
             <!-- 2. CPU Карточка -->
-            <Border Grid.Row="1" Margin="4,4,4,10" CornerRadius="16" 
+            <Border Grid.Row="1" Margin="0,0,0,12" CornerRadius="16" 
                     Background="{Binding CurrentPreset.CardBrush}" 
-                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1"
-                    Padding="16">
+                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1.5"
+                    Padding="16,14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- Заголовок CPU -->
-                    <DockPanel Grid.Row="0">
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="8" Height="8" CornerRadius="4" Background="{Binding CurrentPreset.AccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="PROCESSOR" FontSize="12" FontWeight="Bold" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
+                            <TextBlock Text="CPU" FontSize="13" FontWeight="Black" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
                         </StackPanel>
-                        <TextBlock Text="{Binding CpuName}" FontSize="12" FontWeight="SemiBold" 
+                        <TextBlock Grid.Column="1" Text="{Binding CpuName}" FontSize="13" FontWeight="Bold" 
                                    Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Right" 
-                                   TextTrimming="CharacterEllipsis" MaxWidth="190"/>
-                    </DockPanel>
+                                   TextAlignment="Right" TextTrimming="CharacterEllipsis" Margin="10,0,0,0"/>
+                    </Grid>
 
                     <!-- Датчики CPU -->
-                    <UniformGrid Grid.Row="1" Columns="2" VerticalAlignment="Center" Margin="0,10">
+                    <UniformGrid Grid.Row="1" Columns="2" VerticalAlignment="Center" Margin="0,4,0,10">
                         <controls:CircularGauge Value="{Binding CpuLoad}" Maximum="100" 
                                                 Title="LOAD" Suffix="%"
                                                 Stroke="{Binding CurrentPreset.AccentBrush}"
@@ -96,30 +102,34 @@
             </Border>
 
             <!-- 3. GPU Карточка -->
-            <Border Grid.Row="2" Margin="4,4,4,10" CornerRadius="16" 
+            <Border Grid.Row="2" Margin="0,0,0,12" CornerRadius="16" 
                     Background="{Binding CurrentPreset.CardBrush}" 
-                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1"
-                    Padding="16">
+                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1.5"
+                    Padding="16,14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- Заголовок GPU -->
-                    <DockPanel Grid.Row="0">
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="8" Height="8" CornerRadius="4" Background="{Binding CurrentPreset.SecondaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="GRAPHICS" FontSize="12" FontWeight="Bold" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
+                            <TextBlock Text="GPU" FontSize="13" FontWeight="Black" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
                         </StackPanel>
-                        <TextBlock Text="{Binding GpuName}" FontSize="12" FontWeight="SemiBold" 
+                        <TextBlock Grid.Column="1" Text="{Binding GpuName}" FontSize="13" FontWeight="Bold" 
                                    Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Right" 
-                                   TextTrimming="CharacterEllipsis" MaxWidth="190"/>
-                    </DockPanel>
+                                   TextAlignment="Right" TextTrimming="CharacterEllipsis" Margin="10,0,0,0"/>
+                    </Grid>
 
                     <!-- Датчики GPU -->
-                    <UniformGrid Grid.Row="1" Columns="2" VerticalAlignment="Center" Margin="0,10">
+                    <UniformGrid Grid.Row="1" Columns="2" VerticalAlignment="Center" Margin="0,4,0,10">
                         <controls:CircularGauge Value="{Binding GpuLoad}" Maximum="100" 
                                                 Title="LOAD" Suffix="%"
                                                 Stroke="{Binding CurrentPreset.SecondaryAccentBrush}"
@@ -147,28 +157,32 @@
             </Border>
 
             <!-- 4. RAM Карточка -->
-            <Border Grid.Row="3" Margin="4,4,4,10" CornerRadius="16" 
+            <Border Grid.Row="3" Margin="0,0,0,12" CornerRadius="16" 
                     Background="{Binding CurrentPreset.CardBrush}" 
-                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1"
-                    Padding="16">
+                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1.5"
+                    Padding="16,14">
                 <StackPanel>
-                    <DockPanel>
-                        <StackPanel Orientation="Horizontal">
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="8" Height="8" CornerRadius="4" Background="{Binding CurrentPreset.AccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="SYSTEM MEMORY (RAM)" FontSize="11" FontWeight="Bold" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
+                            <TextBlock Text="RAM" FontSize="13" FontWeight="Black" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
                         </StackPanel>
-                        <TextBlock FontSize="11" FontWeight="Bold" Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Right">
+                        <TextBlock Grid.Column="1" FontSize="12" FontWeight="Bold" Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Right">
                             <Run Text="{Binding RamUsedGb, Mode=OneWay}"/>
                             <Run Text=" / "/>
                             <Run Text="{Binding RamTotalGb, Mode=OneWay}"/>
                             <Run Text=" GB"/>
                         </TextBlock>
-                    </DockPanel>
+                    </Grid>
 
                     <ProgressBar Height="10" Maximum="100" Value="{Binding RamLoad}" 
                                  Foreground="{Binding CurrentPreset.AccentBrush}" 
                                  Background="{Binding CurrentPreset.GaugeTrackBrush}" 
-                                 BorderThickness="0" Margin="0,8,0,0"/>
+                                 BorderThickness="0" Margin="0,4,0,0"/>
                     <DockPanel Margin="0,4,0,0">
                         <TextBlock Text="UTILIZATION" FontSize="9" FontWeight="Bold" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
                         <TextBlock Text="{Binding RamLoad, StringFormat={}{0:F0}%}" FontSize="11" FontWeight="Bold" 
@@ -178,10 +192,10 @@
             </Border>
 
             <!-- 5. Сеть Карточка -->
-            <Border Grid.Row="4" Margin="4,4,4,4" CornerRadius="16" 
+            <Border Grid.Row="4" Margin="0,0,0,12" CornerRadius="16" 
                     Background="{Binding CurrentPreset.CardBrush}" 
-                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1"
-                    Padding="16">
+                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1.5"
+                    Padding="16,14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -204,7 +218,30 @@
                 </Grid>
             </Border>
 
+            <!-- 6. SSD Накопитель & Нижний статус -->
+            <Border Grid.Row="5" CornerRadius="16" 
+                    Background="{Binding CurrentPreset.CardBrush}" 
+                    BorderBrush="{Binding CurrentPreset.CardBorderBrush}" BorderThickness="1.5"
+                    Padding="16,14" VerticalAlignment="Top">
+                <StackPanel>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="8" Height="8" CornerRadius="4" Background="{Binding CurrentPreset.SecondaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="STORAGE SSD" FontSize="11" FontWeight="Black" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Text="{Binding DiskLoad, StringFormat={}{0:F0}%}" FontSize="11" FontWeight="Bold" Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <ProgressBar Height="6" Maximum="100" Value="{Binding DiskLoad}" 
+                                 Foreground="{Binding CurrentPreset.SecondaryAccentBrush}" 
+                                 Background="{Binding CurrentPreset.GaugeTrackBrush}" 
+                                 BorderThickness="0" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
         </Grid>
     </Grid>
 </UserControl>
-

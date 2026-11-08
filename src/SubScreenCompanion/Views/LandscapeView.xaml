@@ -63,15 +63,19 @@
                     </Grid.RowDefinitions>
 
                     <!-- Заголовок CPU -->
-                    <DockPanel Grid.Row="0">
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Grid Grid.Row="0" Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="8" Height="8" CornerRadius="4" Background="{Binding CurrentPreset.AccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="PROCESSOR" FontSize="11" FontWeight="Bold" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
+                            <TextBlock Text="CPU" FontSize="12" FontWeight="Black" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
                         </StackPanel>
-                        <TextBlock Text="{Binding CpuName}" FontSize="11" FontWeight="SemiBold" 
-                                   Foreground="{Binding CurrentPreset.TextBrush}" DockPanel.Dock="Right" 
-                                   HorizontalAlignment="Right" TextTrimming="CharacterEllipsis" MaxWidth="150"/>
-                    </DockPanel>
+                        <TextBlock Grid.Column="1" Text="{Binding CpuName}" FontSize="12" FontWeight="Bold" 
+                                   Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Right" 
+                                   TextAlignment="Right" TextTrimming="CharacterEllipsis" Margin="10,0,0,0"/>
+                    </Grid>
 
                     <!-- Два датчика CPU: Load и Temp -->
                     <UniformGrid Grid.Row="1" Columns="2" VerticalAlignment="Center">
@@ -117,15 +121,19 @@
                     </Grid.RowDefinitions>
 
                     <!-- Заголовок GPU -->
-                    <DockPanel Grid.Row="0">
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Grid Grid.Row="0" Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="8" Height="8" CornerRadius="4" Background="{Binding CurrentPreset.SecondaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="GRAPHICS" FontSize="11" FontWeight="Bold" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
+                            <TextBlock Text="GPU" FontSize="12" FontWeight="Black" Foreground="{Binding CurrentPreset.SubtextBrush}"/>
                         </StackPanel>
-                        <TextBlock Text="{Binding GpuName}" FontSize="11" FontWeight="SemiBold" 
-                                   Foreground="{Binding CurrentPreset.TextBrush}" DockPanel.Dock="Right" 
-                                   HorizontalAlignment="Right" TextTrimming="CharacterEllipsis" MaxWidth="150"/>
-                    </DockPanel>
+                        <TextBlock Grid.Column="1" Text="{Binding GpuName}" FontSize="12" FontWeight="Bold" 
+                                   Foreground="{Binding CurrentPreset.TextBrush}" HorizontalAlignment="Right" 
+                                   TextAlignment="Right" TextTrimming="CharacterEllipsis" Margin="10,0,0,0"/>
+                    </Grid>
 
                     <!-- Два датчика GPU: Load и Temp -->
                     <UniformGrid Grid.Row="1" Columns="2" VerticalAlignment="Center">
